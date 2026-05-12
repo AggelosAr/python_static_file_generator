@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Bender(Enum):
+class TextNode(Enum):
     TEXT = "text"
     BOLD_TEXT = "bold_text"
     ITALIC_TEXT = "italic_text"
@@ -13,7 +13,7 @@ class Bender(Enum):
         self.text_type = text_type
         self.url = url
     
-    def __eq__(self, other: 'Bender'):
+    def __eq__(self, other: 'TextNode'):
         return all(
             self.text == other.text,
             self.text_type == other.text_type,
