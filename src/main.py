@@ -1,12 +1,10 @@
-from textnode import TextNode
+from nodes.textnode import TextNode
 
 
 def main():
     text_node = TextNode(text='This is some anchor text',
                          text_type='link',
                          url='https://www.boot.dev')
-
-
     print(text_node)
 
 
