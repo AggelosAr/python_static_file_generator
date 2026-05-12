@@ -34,13 +34,14 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual('div', html_node.tag)
         self.assertEqual({'class': 'container'}, html_node.props)
 
-        self.assertEqual(2, len(html_node.children))
+        self.assertEqual(1, len(html_node.children))
         self.assertEqual('ol', html_node.children[0].tag)
 
-        self.assertEqual('li', html_node.children[0].children[1].value)
+        self.assertEqual(2, len(html_node.children[0].children))
+        self.assertEqual('li', html_node.children[0].children[1].tag)
         self.assertEqual('First item', html_node.children[0].children[0].value)
-        self.assertEqual('li', html_node.children[1].children[1].value)
-        self.assertEqual('Second item', html_node.children[1].children[0].value)
+        self.assertEqual('li', html_node.children[0].children[1].tag)
+        self.assertEqual('Second item', html_node.children[0].children[1].value)
     
     def test_to_html_raises_exc(self):
         html_node = self.get_sample_test_html_node_no_props()
