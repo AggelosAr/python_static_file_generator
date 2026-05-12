@@ -79,5 +79,6 @@ def test_to_html_many_children_two_level_deep_different_level_nest(self):
     self.assertEqual('<div><p>Normal text <b>Bold and <i>italic</i></b></p></div>', 
                      parent_node.to_html())
         
+
 if __name__ == '__main__':
     unittest.main()
