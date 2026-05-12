@@ -6,16 +6,16 @@ from htmlnode import HTMLNode
 class TestHTMLNode(unittest.TestCase):
 
     def get_sample_test_html_node_no_props(self) -> HTMLNode:
-        html_node = HTMLNode(tag='<p>',
+        html_node = HTMLNode(tag='p',
                              value='Some random paragraph!')
         return html_node
     
     def test_instantiate_works_no_children(self):
-        html_node = HTMLNode(tag='<p>',
+        html_node = HTMLNode(tag='p',
                              value='Some random paragraph!',
                              props={'class': 'container'})
         
-        self.assertEqual(html_node.tag, '<p>')
+        self.assertEqual(html_node.tag, 'p')
         self.assertEqual(html_node.value, 'Some random paragraph!')
         self.assertEqual(html_node.props, {'class': 'container'})
 
