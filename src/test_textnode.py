@@ -14,7 +14,7 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is a text node", TextType.ITALIC_TEXT)
         self.assertNotEqual(node, node2)
 
-    def test_instatate_works(self):
+    def test_instantiate_works(self):
         text_node = TextNode(text="This is some anchor text",
                              text_type="link",
                              url="https://www.boot.dev")
@@ -22,7 +22,7 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(text_node.text_type, "link")
         self.assertEqual(text_node.url, "https://www.boot.dev")
     
-    def test_instatate_works_with_none_url(self):
+    def test_instantiate_works_with_none_url(self):
         text_node = TextNode(text="This is some anchor text",
                              text_type="link")
         self.assertEqual(text_node.text, "This is some anchor text")
