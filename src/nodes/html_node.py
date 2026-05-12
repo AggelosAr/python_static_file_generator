@@ -15,15 +15,14 @@ class HTMLNode:
         self.children = children
         self.props = props
 
-    # Todo add tests for this method.
     def to_html(self):
-        raise NotImplementedError
+        raise NotImplementedError('Only children of this class should implement this method!')
 
     def props_to_html(self) -> str:
         return ''.join([f' {k}="{v}"' for k, v in self.props.items()])
 
     def __str__(self):
-        ...
+        return f'HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})'
     
     def __repr__(self):
         return self.__str__()
