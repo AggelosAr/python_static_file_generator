@@ -30,10 +30,9 @@ class ParentNode(HTMLNode):
             html.append(child.to_html())
 
         return f'{start}{"".join(html)}{end}'
-    
-    # TODO maybe implement and add tests.
+
     def __str__(self):
-        ...
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
     
     def __repr__(self):
         return self.__str__()
