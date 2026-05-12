@@ -1,5 +1,7 @@
 from enum import Enum
 
+from .html_node import HTMLNode
+
 
 class TextType(Enum):
     TEXT = 'text'
@@ -11,16 +13,38 @@ class TextType(Enum):
 
 
 class TextNode:
+
     def __init__(self, 
                  text: str, 
                  text_type: TextType, 
                  url: str | None = None):
-        
         self.text = text
-        # assert text_type in TextType # Todo finish the validation and add test for it 
         self.text_type = text_type
         self.url = url
     
+    @staticmethod
+    def text_node_to_html_node(text_node: 'TextNode') -> HTMLNode:
+        match text_node.text_type:
+            case TextType.TEXT:
+                return HTMLNode(value=text_node.text)
+            case TextType.BOLD_TEXT:
+                return HTMLNode(tag='b', value=text_node.text)
+            case TextType.ITALIC_TEXT:
+                return HTMLNode(tag='i', value=text_node.text)
+            case TextType.CODE_TEXT:
+                return HTMLNode(tag='code', value=text_node.text)
+            case TextType.LINK:
+                return HTMLNode(tag='a', 
+                                value=text_node.text, 
+                                props={'href': text_node.url})
+            case TextType.IMAGE:
+                return HTMLNode(tag='img', 
+                                props={'src': text_node.url,
+                                       'alt': text_node.text})
+            case _:
+                # TODO maybe add validation elsewhere for the text_type
+                raise Exception(f'Invalid text type: {text_node.text_type}')
+
     def __eq__(self, other: 'TextNode') -> bool:
         return all(
             [
@@ -29,7 +53,7 @@ class TextNode:
                 self.url == other.url
             ]
         )
-    
+
     def __str__(self) -> str:
         return f'TextNode({self.text}, {self.text_type.value}, {self.url})'
     
