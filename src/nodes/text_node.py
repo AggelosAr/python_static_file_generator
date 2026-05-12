@@ -3,6 +3,7 @@ from enum import Enum
 from .html_node import HTMLNode
 
 
+# TODO maybe add a connector here for the text_node_to_html_node match logic and text_type?
 class TextType(Enum):
     TEXT = 'text'
     BOLD_TEXT = 'bold_text'
