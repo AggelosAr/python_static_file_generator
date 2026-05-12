@@ -18,8 +18,6 @@ class HTMLNode:
         raise NotImplementedError
     
     def props_to_html(self):
-        if not self.props:
-            return ''
         return ''.join([f' {k}="{v}"' for k, v in self.props.items()])
 
     def __str__(self):
