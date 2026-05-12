@@ -14,7 +14,7 @@ class LeafNode(HTMLNode):
         if self.value is None:
             raise ValueError('All leaf nodes must have a value.')
         if self.tag is None:
-            return self.tag
+            return self.value
         
         props = ''
         if self.props:
