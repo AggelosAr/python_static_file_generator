@@ -52,6 +52,5 @@ class TestTextNode(unittest.TestCase):
                          node.__str__())
 
 
-
 if __name__ == '__main__':
     unittest.main()
