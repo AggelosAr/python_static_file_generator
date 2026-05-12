@@ -1,11 +1,11 @@
 
-# Todo for tag assert it doesnt conttain < and > 
+# Todo for tag assert it doesnt conttain < and > or maybe a enum of tags
 # Todo maybe add comparison method.
 # todo add an enum of tags or smth. And validate against them. is this None?
 class HTMLNode:
 
     def __init__(self, 
-                 tag: str, 
+                 tag: str | None = None, 
                  value: str | None = None, 
                  children: list['HTMLNode'] = None, 
                  props: dict | None = None):
