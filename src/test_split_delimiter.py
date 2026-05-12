@@ -1,0 +1,122 @@
+import unittest
+
+from nodes.text_node import TextType, TextNode
+from inline.split_delimiter import split_nodes_delimiter, split_node_with_delimiter
+
+
+# TODO add tests for LINK and IMAGE TextTypes
+class TestTextNode(unittest.TestCase):
+
+    def test_split_node_with_delimiter(self):
+        node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
+        new_nodes = split_node_with_delimiter(old_node=node, delimiter='`', text_type=TextType.CODE_TEXT)
+
+        expected = [
+            TextNode(text='This is text with a ', text_type=TextType.TEXT),
+            TextNode(text='code block', text_type=TextType.CODE_TEXT),
+            TextNode(text=' word', text_type=TextType.TEXT)
+        ]
+        self.assertEqual(expected, new_nodes)
+
+    def test_split_node_with_bold_delimiter(self):
+        node = TextNode(text='This has **bold text** inside', text_type=TextType.TEXT)
+        new_nodes = split_node_with_delimiter(old_node=node, 
+                                              delimiter='**', 
+                                              text_type=TextType.BOLD_TEXT)
+
+        expected = [
+            TextNode(text='This has ', text_type=TextType.TEXT),
+            TextNode(text='bold text', text_type=TextType.BOLD_TEXT),
+            TextNode(text=' inside', text_type=TextType.TEXT)
+        ]
+
+        self.assertEqual(expected, new_nodes)
+
+    def test_split_node_with_italic_delimiter(self):
+        node = TextNode(text='This has _italic text_ inside', text_type=TextType.TEXT)
+        new_nodes = split_node_with_delimiter(old_node=node, 
+                                              delimiter='_',
+                                                text_type=TextType.ITALIC_TEXT)
+
+        expected = [
+            TextNode(text='This has ', text_type=TextType.TEXT),
+            TextNode(text='italic text', text_type=TextType.ITALIC_TEXT),
+            TextNode(text=' inside', text_type=TextType.TEXT)
+        ]
+        self.assertEqual(expected, new_nodes)
+
+    def test_split_node_multiple_code_blocks(self):
+        node = TextNode('Use `code1` and `code2` here', TextType.TEXT)
+        new_nodes = split_node_with_delimiter(old_node=node, 
+                                              delimiter='`', 
+                                              text_type=TextType.CODE_TEXT)
+
+        expected = [
+            TextNode(text='Use ', text_type=TextType.TEXT),
+            TextNode(text='code1', text_type=TextType.CODE_TEXT),
+            TextNode(text=' and ', text_type=TextType.TEXT),
+            TextNode(text='code2', text_type=TextType.CODE_TEXT),
+            TextNode(text=' here', text_type=TextType.TEXT)
+        ]
+        self.assertEqual(expected, new_nodes)
+
+    def test_split_node_without_delimiter(self):
+        node = TextNode(text='Plain text only', text_type=TextType.TEXT)
+       
+        new_nodes = split_node_with_delimiter(old_node=node, 
+                                              delimiter='`', 
+                                              text_type=TextType.CODE_TEXT)
+        
+        self.assertEqual([TextNode(text='Plain text only', text_type=TextType.TEXT)], new_nodes)
+
+    def test_split_node_empty_string(self):
+        node = TextNode(text='', text_type=TextType.TEXT)
+        
+        new_nodes = split_node_with_delimiter(old_node=node, 
+                                              delimiter='`', 
+                                              text_type=TextType.CODE_TEXT)
+        
+        self.assertEqual([TextNode(text='', text_type=TextType.TEXT)], new_nodes)
+
+    def test_split_node_unmatched_delimiter(self):
+        node = TextNode(text='This has a `broken code block', text_type=TextType.TEXT)
+
+        with self.assertRaises(Exception) as context:
+            _ = split_node_with_delimiter(old_node=node, 
+                                          delimiter='`', 
+                                          text_type=TextType.CODE_TEXT)
+
+        self.assertEqual('Invalid Markdown syntax.', str(context.exception))
+
+    def test_split_nodes_delimiter_list_with_one_element(self):
+        node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
+        new_nodes = split_nodes_delimiter(old_nodes=[node], 
+                                          delimiter='`', 
+                                          text_type=TextType.CODE_TEXT)
+
+        expected = [
+            TextNode(text='This is text with a ', text_type=TextType.TEXT),
+            TextNode(text='code block', text_type=TextType.CODE_TEXT),
+            TextNode(text=' word', text_type=TextType.TEXT)
+        ]
+        self.assertEqual(expected, new_nodes)
+    
+    def test_split_nodes_delimiter_list_with_two_elements(self):
+        node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
+        node_2 = TextNode(text='This has **bold text** inside', text_type=TextType.TEXT)
+        new_nodes = split_nodes_delimiter(old_nodes=[node, node_2], 
+                                          delimiter='`', 
+                                          text_type=TextType.CODE_TEXT)
+
+        expected = [
+            TextNode(text='This is text with a ', text_type=TextType.TEXT),
+            TextNode(text='code block', text_type=TextType.CODE_TEXT),
+            TextNode(text=' word', text_type=TextType.TEXT),
+            TextNode(text='This has **bold text** inside', text_type=TextType.TEXT)
+        ]
+
+        self.assertEqual(expected, new_nodes)
+
+
+if __name__ == '__main__':
+    unittest.main()
