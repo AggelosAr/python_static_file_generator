@@ -27,3 +27,23 @@ class HTMLNode:
     
     def __repr__(self):
         return self.__str__()
+
+
+# TODO add tests for this class
+class LeafNode(HTMLNode):
+
+    def __init__(self, 
+                 value: str,
+                 tag: str | None = None,
+                 props: dict | None = None):
+        
+        super().__init__(tag=tag, value=value, props=props)
+
+    def to_html(self) -> str:
+        ...
+    
+    def __str__(self):
+        ...
+    
+    def __repr__(self):
+        return self.__str__()
