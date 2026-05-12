@@ -19,7 +19,7 @@ class HTMLNode:
     
     # Todo maybe add comparison method.
 
-    def props_to_html(self):
+    def props_to_html(self) -> str:
         return ''.join([f' {k}="{v}"' for k, v in self.props.items()])
 
     def __str__(self):
