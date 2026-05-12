@@ -11,16 +11,18 @@ class TextType(Enum):
 
 
 class TextNode:
-    def __init__(self, text, text_type, url):
+    def __init__(self, text, text_type, url=None):
         self.text = text
         self.text_type = text_type
         self.url = url
     
     def __eq__(self, other: 'TextNode'):
         return all(
-            self.text == other.text,
-            self.text_type == other.text_type,
-            self.url == other.url,
+            [
+                self.text == other.text,
+                self.text_type == other.text_type,
+                self.url == other.url
+            ]
         )
     
     def __str__(self):
