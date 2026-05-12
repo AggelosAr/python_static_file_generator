@@ -48,12 +48,22 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual('<p>Some random paragraph!</p>', 
                          leaf_node.props_to_html())
 
-    def test_to_html_props(self):
+    def test_to_html_props_single(self):
         leaf_node = LeafNode(tag="a", 
                              value="Click me!", 
                              props={"href": "https://www.google.com"})
 
         self.assertEqual('<a href="https://www.google.com">Click me!</a>', 
+                         leaf_node.props_to_html())
+    
+    def test_to_html_props_more(self):
+        leaf_node = LeafNode(tag="a", 
+                             value="Click me!", 
+                             props={"href": "https://www.google.com",
+                                    "target": "_blank",
+                                    "class": "link"})
+
+        self.assertEqual('<a href="https://www.google.com" target="_blank" class="link">Click me!</a>', 
                          leaf_node.props_to_html())
 
     def test___str__(self):
