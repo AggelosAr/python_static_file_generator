@@ -13,6 +13,7 @@ class TextType(Enum):
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
+        # assert text_type in TextType # Todo finish the validation and add test for it 
         self.text_type = text_type
         self.url = url
     
