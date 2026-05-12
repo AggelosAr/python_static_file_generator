@@ -52,6 +52,29 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual('Only children of this class should implement this method!', 
                          str(context.exception))
 
+    def test_get_props_formated_no_prop(self):
+        html_node = self.get_sample_test_html_node_no_props()
+
+        self.assertEqual('', html_node.get_props_formated())
+
+    def test_get_props_formated_single_prop(self):
+        props = {'class': 'container'}
+        html_node = self.get_sample_test_html_node_no_props()
+        html_node.props = props
+        
+        self.assertEqual(' class="container"', html_node.get_props_formated())
+    
+    def test_get_props_formated_double_props(self):
+        props = {
+            'href': 'https://www.google.com',
+            'target': '_blank'
+        }
+        html_node = self.get_sample_test_html_node_no_props()
+        html_node.props = props
+
+        self.assertEqual(' href="https://www.google.com" target="_blank"', 
+                         html_node.get_props_formated())
+
     def test_props_to_html_none(self):
         props = {}
         html_node = self.get_sample_test_html_node_no_props()
@@ -65,8 +88,7 @@ class TestHTMLNode(unittest.TestCase):
         html_node = self.get_sample_test_html_node_no_props()
         html_node.props = props
 
-        self.assertEqual(' class="container"', 
-                         html_node.props_to_html())
+        self.assertEqual(' class="container"', html_node.props_to_html())
         
     def test_props_to_html_double(self):
         props = {

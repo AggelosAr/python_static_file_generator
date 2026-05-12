@@ -20,10 +20,7 @@ class ParentNode(HTMLNode):
         html = []
         tag_start, tag_close, html_tag_close = '<', '>', '/'
 
-        props = ''
-        if self.props:
-            props = ' ' + ' '.join([f'{k}="{v}"' for k, v in self.props.items()])
-        start = f'{tag_start}{self.tag}{props}{tag_close}'
+        start = f'{tag_start}{self.tag}{self.get_props_formated()}{tag_close}'
         end = f'{tag_start}{html_tag_close}{self.tag}{tag_close}'
 
         for child in self.children:
@@ -32,7 +29,7 @@ class ParentNode(HTMLNode):
         return f'{start}{"".join(html)}{end}'
 
     def __str__(self):
-        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
+        return f'ParentNode({self.tag}, children: {self.children}, {self.props})'
     
     def __repr__(self):
         return self.__str__()

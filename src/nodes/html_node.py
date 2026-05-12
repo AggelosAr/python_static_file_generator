@@ -18,6 +18,12 @@ class HTMLNode:
     def to_html(self):
         raise NotImplementedError('Only children of this class should implement this method!')
 
+    def get_props_formated(self) -> str:
+        props = ''
+        if self.props:
+            props = ' ' + ' '.join([f'{k}="{v}"' for k, v in self.props.items()])
+        return props
+
     def props_to_html(self) -> str:
         return ''.join([f' {k}="{v}"' for k, v in self.props.items()])
 
