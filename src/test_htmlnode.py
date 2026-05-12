@@ -7,16 +7,16 @@ class TestHTMLNode(unittest.TestCase):
 
     def get_sample_test_html_node_no_props(self) -> HTMLNode:
         html_node = HTMLNode(tag='<p>',
-                             value='I went to school today!')
+                             value='Some random paragraph!')
         return html_node
     
     def test_instantiate_works_no_children(self):
         html_node = HTMLNode(tag='<p>',
-                             value='I went to school today!',
+                             value='Some random paragraph!',
                              props={'class': 'container'})
         
         self.assertEqual(html_node.tag, '<p>')
-        self.assertEqual(html_node.value, 'I went to school today!')
+        self.assertEqual(html_node.value, 'Some random paragraph!')
         self.assertEqual(html_node.props, {'class': 'container'})
 
     def test_instantiate_works_with_nested_list_children(self):
@@ -75,7 +75,6 @@ class TestHTMLNode(unittest.TestCase):
 
         self.assertEqual(' href="https://www.google.com" target="_blank"', 
                          html_node.props_to_html())
-
 
 
 if __name__ == '__main__':
