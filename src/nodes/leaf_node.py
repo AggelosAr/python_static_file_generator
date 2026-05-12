@@ -14,7 +14,7 @@ class LeafNode(HTMLNode):
         if self.value is None:
             raise ValueError('All leaf nodes must have a value.')
         if self.tag is None:
-            return str(self.value)
+            return self.tag
         
         props = ''
         if self.props:
@@ -29,7 +29,6 @@ class LeafNode(HTMLNode):
         return f'{start}{middle}{end}'
     
     def __str__(self):
-        # Todo maybe update this for the props attr to show better.
         return f'LeafNode({self.tag}, {self.value}, {self.props})'
     
     def __repr__(self):
