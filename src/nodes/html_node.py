@@ -24,6 +24,7 @@ class HTMLNode:
             props = ' ' + ' '.join([f'{k}="{v}"' for k, v in self.props.items()])
         return props
 
+    # get_props_formated and props_to_html are kinda the same maybe refactor 
     def props_to_html(self) -> str:
         return ''.join([f' {k}="{v}"' for k, v in self.props.items()])
 
