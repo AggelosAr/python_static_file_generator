@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Literal
 
 from .html_node import HTMLNode
 
@@ -10,7 +11,26 @@ class TextType(Enum):
     ITALIC_TEXT = 'italic_text'
     CODE_TEXT = 'code_text'
     LINK = 'link'
-    IMAGE = 'image' 
+    IMAGE = 'image'
+
+    # TODO add test
+    @classmethod
+    def get_enum_type_from_symbol(cls, 
+                                  symbol: Literal['**', '_', '`', '![', '[']
+                                  ) -> 'TextType':
+        match symbol:
+            case '**':
+                return TextType.BOLD_TEXT
+            case '_':
+                return TextType.ITALIC_TEXT
+            case '`':
+                return TextType.CODE_TEXT
+            case '[':
+                return TextType.LINK
+            case '![':
+                return TextType.IMAGE
+            case _:
+                return TextType.TEXT
 
 
 class TextNode:
