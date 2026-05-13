@@ -19,16 +19,18 @@ class MarkDownBlock(str):
     
     @staticmethod
     def sanitize(value: str) -> str:
-        value = value.lstrip('\n')
+        # remove trailing whitespace and leading new lines
+        value = value.lstrip('\n').rstrip()
 
         lines = value.split('\n')
+
         # remove leading empty
         if lines[0] == '':
             lines = lines[1:]
         # remove traling empty
         if lines and lines[-1] == '':
             lines.pop()
-
+        
         return '\n'.join(lines)
 
 
@@ -106,7 +108,8 @@ class BlockType(Enum):
                         # check paragraph
                         thre_frst_chrs = [l[:len(_SINGLE_O_L)] for l in lines]
                         two_frst_chrs = [l[:len(_UNORDERED_S)] for l in lines]
-                        match two_frst_chrs[0] == _UNORDERED_S and reduce(lambda x, y: x==y, two_frst_chrs) == True:
+                        
+                        match two_frst_chrs[0] == _UNORDERED_S and len(set(two_frst_chrs)) == 1:
                             case True:
                                 return BlockType.UNORDERED_LIST
                             case _:
@@ -191,21 +194,19 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
             case BlockType.UNORDERED_LIST:
                 block_node.tag = 'ul'
-                for line in lines: 
-                    
-                    nodes = LeafNode(value=line, tag='li')
-                    block_node.add_children(nodes)
-                    # seperate each line by a \n (except the last one)
-                    block_node.add_children(LeafNode(value='\n', tag=None))
+
+                for line in lines:
+                    nodes = single_line_text_to_html_nodes(text=line[len(_UNORDERED_S):])
+                    leaf_node = ParentNode(tag='li', children=nodes)
+                    block_node.add_children(leaf_node)
 
             case BlockType.ORDERED_LIST:
                 block_node.tag = 'ol'
-                for line in lines: 
-                    
-                    nodes = LeafNode(value=line, tag='li')
-                    block_node.add_children(nodes)
-                    # seperate each line by a \n (except the last one)
-                    block_node.add_children(LeafNode(value='\n', tag=None))
+
+                for line in lines:
+                    nodes = single_line_text_to_html_nodes(text=line[len(_SINGLE_O_L):])
+                    leaf_node = ParentNode(tag='li', children=nodes)
+                    block_node.add_children(leaf_node)
 
         root.add_children(_from=block_node)
 

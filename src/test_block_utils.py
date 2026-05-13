@@ -164,6 +164,14 @@ print('Hello, world!')
 ''')
         self.assertEqual(BlockType.UNORDERED_LIST, BlockType.block_to_block_type(markdown_block=md))
 
+    def test_block_to_block_type_ul_trailing_space_and_new_line(self):
+        md = MarkDownBlock(value='''
+- l1
+- l2
+                           
+''')
+        self.assertEqual(BlockType.UNORDERED_LIST, BlockType.block_to_block_type(markdown_block=md))
+
     def test_block_to_block_type_ol_single(self):
         md = MarkDownBlock(value='''
 1. l
@@ -269,7 +277,12 @@ the **same** even with inline stuff
 '''
         node = markdown_to_html_node(md)
         html = node.to_html()
+        print('-----------------------')
+        print(html)
 
+        print(            '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>',
+)
+        print('-----------------------')
         self.assertEqual(
             '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>',
             html
@@ -299,7 +312,7 @@ this is paragraph text
         html = node.to_html()
 
         self.assertEqual(
-            '<div><h1>this is an h1</h1><p>this is paragraph text</p><h2>this is an h2</h2><h3>this is an h3</h3><h4>this is an h4</h4><h5>this is an h5</h5><h6>this is an h6</h6><p>####### this is a parapgraph</p><p>>######## this is a parapgraph</p></div>',
+            '<div><h1>this is an h1</h1><p>this is paragraph text</p><h2>this is an h2</h2><h3>this is an h3</h3><h4>this is an h4</h4><h5>this is an h5</h5><h6>this is an h6</h6><p>####### this is a parapgraph</p><p>######## this is a parapgraph</p></div>',
             html
         )
 
