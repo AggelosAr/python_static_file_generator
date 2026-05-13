@@ -66,7 +66,7 @@ def split_node_with_delimiter(old_node: TextNode,
     return new_nodes
 
 
-# TODO remove code duplication. Only differences are [extract_markdown_images, formatting]
+# TODO *1* remove code duplication. Only differences are [extract_markdown_images, formatting] 
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
 
     new_nodes = []
@@ -102,6 +102,7 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     return new_nodes
 
 
+# TODO *1* remove code duplication. Only differences are [extract_markdown_images, formatting] 
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
