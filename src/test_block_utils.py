@@ -1,6 +1,6 @@
 import unittest
 
-from blocks.block_utils import markdown_to_blocks
+from blocks.block_utils import markdown_to_blocks, BlockType
 
 
 class TestTextNode(unittest.TestCase):
@@ -78,6 +78,118 @@ This is the same paragraph on a new line
         blocks = markdown_to_blocks(md)
 
         self.assertEqual([], blocks)
+
+    def test_block_to_block_type_paragraph(self):
+        md = '''
+This is a normal paragraph.
+'''
+        self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
+    
+    def test_block_to_block_type_heading_one(self):
+        md = '''
+# This is a heading
+'''
+        self.assertEqual(BlockType.HEADING, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_heading_two(self):
+        md = '''
+## This is a heading
+'''
+        self.assertEqual(BlockType.HEADING, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_heading_three(self):
+        md = '''
+### This is a heading
+'''
+        self.assertEqual(BlockType.HEADING, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_heading_four(self):
+        md = '''
+#### This is a heading
+'''
+        self.assertEqual(BlockType.HEADING, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_heading_five(self):
+        md = '''
+##### This is a heading
+'''
+        self.assertEqual(BlockType.HEADING, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_heading_six(self):
+        md = '''
+###### This is a heading
+'''
+        self.assertEqual(BlockType.HEADING, BlockType.block_to_block_type(markdown_block=md))
+    
+    def test_block_to_block_type_heading_seven(self):
+        md = '''
+####### This is a heading
+'''
+        self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_code(self):
+        md = '''
+```
+python
+print("Hello, world!")
+```
+'''
+        self.assertEqual(BlockType.CODE, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_quote_single(self):
+        md = '''
+> Quote Text
+'''
+        self.assertEqual(BlockType.QUOTE, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ul(self):
+        md = '''
+- l1
+- l2
+'''
+        self.assertEqual(BlockType.UNORDERED_LIST, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ol_single(self):
+        md = '''
+1. l
+'''
+        self.assertEqual(BlockType.ORDERED_LIST, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ol_single_fails(self):
+            md = '''
+1.
+'''
+            self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ol_single_wins(self):
+                md = '''
+1. 
+'''
+                self.assertEqual(BlockType.ORDERED_LIST, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ol(self):
+        md = '''
+1. l
+2.  l
+3.   l
+'''
+        self.assertEqual(BlockType.ORDERED_LIST, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ol_fails(self):
+        md = '''
+1 l
+2. l
+3.  l
+'''
+        self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_block_to_block_type_ol_fails_another_case(self):
+        md = '''
+1. l
+.   l
+3.   l
+'''
+        self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
 
 
 if __name__ == '__main__':
