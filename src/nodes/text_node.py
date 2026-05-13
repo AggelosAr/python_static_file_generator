@@ -61,9 +61,6 @@ class TextNode:
                 return HTMLNode(tag='img', 
                                 props={'src': self.url,
                                        'alt': self.text})
-            case _:
-                # TODO maybe add validation elsewhere for the text_type
-                raise Exception(f'Invalid text type: {self.text_type}')
 
     def __eq__(self, other: 'TextNode') -> bool:
         return all(
