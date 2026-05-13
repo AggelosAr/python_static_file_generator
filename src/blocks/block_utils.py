@@ -144,8 +144,6 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
                 for line in lines:
                     nodes = single_line_text_to_html_nodes(text=line)
-                    print('NODES-> ', nodes)
-                    print('NODES-> ', type(nodes))
                     block_node.add_children(nodes)
                     # seperate each line by a space (except the last one)
                     block_node.add_children(LeafNode(value=' ', tag=None))
