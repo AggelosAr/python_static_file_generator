@@ -33,21 +33,21 @@ class TestTextNode(unittest.TestCase):
 
     def test_text_node_to_html_node_bold(self):
         node = TextNode('Hello', TextType.BOLD_TEXT)
-        html_node = node.text_node_to_html_node(node)
+        html_node = node.text_node_to_html_node()
 
         self.assertEqual('b', html_node.tag)
         self.assertEqual('Hello', html_node.value)
 
     def test_text_node_to_html_node_italic(self):
         node = TextNode('Hello', TextType.ITALIC_TEXT)
-        html_node = node.text_node_to_html_node(node)
+        html_node = node.text_node_to_html_node()
 
         self.assertEqual('i', html_node.tag)
         self.assertEqual('Hello', html_node.value)
 
     def test_text_node_to_html_node_code(self):
         node = TextNode("print('hi')", TextType.CODE_TEXT)
-        html_node = node.text_node_to_html_node(node)
+        html_node = node.text_node_to_html_node()
 
         self.assertEqual('code', html_node.tag)
         self.assertEqual("print('hi')", html_node.value)
@@ -57,7 +57,7 @@ class TestTextNode(unittest.TestCase):
                         text_type=TextType.LINK,
                         url='https://boot.dev')
 
-        html_node = node.text_node_to_html_node(node)
+        html_node = node.text_node_to_html_node()
 
         self.assertEqual('a', html_node.tag)
         self.assertEqual('Boot.dev', html_node.value)
@@ -68,7 +68,7 @@ class TestTextNode(unittest.TestCase):
                         text_type=TextType.IMAGE,
                         url='https://example.com/image.png')
 
-        html_node = node.text_node_to_html_node(node)
+        html_node = node.text_node_to_html_node()
 
         self.assertEqual('img', html_node.tag)
         self.assertEqual({'src': 'https://example.com/image.png',
@@ -79,7 +79,7 @@ class TestTextNode(unittest.TestCase):
         node = TextNode('Hello', 'invalid_type')
 
         with self.assertRaises(Exception) as context:
-            node.text_node_to_html_node(node)
+            _ = node.text_node_to_html_node()
 
         self.assertEqual('Invalid text type: invalid_type', str(context.exception))
 

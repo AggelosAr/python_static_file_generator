@@ -43,28 +43,27 @@ class TextNode:
         self.text_type = text_type
         self.url = url
     
-    @staticmethod
-    def text_node_to_html_node(text_node: 'TextNode') -> HTMLNode:
-        match text_node.text_type:
+    def text_node_to_html_node(self) -> HTMLNode:
+        match self.text_type:
             case TextType.TEXT:
-                return HTMLNode(value=text_node.text)
+                return HTMLNode(value=self.text)
             case TextType.BOLD_TEXT:
-                return HTMLNode(tag='b', value=text_node.text)
+                return HTMLNode(tag='b', value=self.text)
             case TextType.ITALIC_TEXT:
-                return HTMLNode(tag='i', value=text_node.text)
+                return HTMLNode(tag='i', value=self.text)
             case TextType.CODE_TEXT:
-                return HTMLNode(tag='code', value=text_node.text)
+                return HTMLNode(tag='code', value=self.text)
             case TextType.LINK:
                 return HTMLNode(tag='a', 
-                                value=text_node.text, 
-                                props={'href': text_node.url})
+                                value=self.text, 
+                                props={'href': self.url})
             case TextType.IMAGE:
                 return HTMLNode(tag='img', 
-                                props={'src': text_node.url,
-                                       'alt': text_node.text})
+                                props={'src': self.url,
+                                       'alt': self.text})
             case _:
                 # TODO maybe add validation elsewhere for the text_type
-                raise Exception(f'Invalid text type: {text_node.text_type}')
+                raise Exception(f'Invalid text type: {self.text_type}')
 
     def __eq__(self, other: 'TextNode') -> bool:
         return all(
