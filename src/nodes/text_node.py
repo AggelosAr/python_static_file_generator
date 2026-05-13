@@ -58,9 +58,12 @@ class TextNode:
                                 value=self.text, 
                                 props={'href': self.url})
             case TextType.IMAGE:
-                return LeafNode(tag='img', 
+                return LeafNode(tag='img',
+                                value='', 
                                 props={'src': self.url,
                                        'alt': self.text})
+            case _:
+                raise Exception(f'Invalid text type: {self.text_type}')
 
     def __eq__(self, other: 'TextNode') -> bool:
         return all(
