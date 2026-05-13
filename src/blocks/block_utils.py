@@ -27,7 +27,6 @@ class BlockType(Enum):
         if lines[-1] == '':
             lines.pop()
 
-        print(' ------------------> ', lines)
         line = lines[0]
         
         match len(lines):
@@ -81,7 +80,6 @@ class BlockType(Enum):
                         # check paragraph
                         three_first_chars = [l[:len(SINGLE_O_L)] for l in lines]
                         two_first_chars = [l[:len(UNORDERED_S)] for l in lines]
-                        print(' -----------------------------------> ',three_first_chars)
                         match two_first_chars[0] == UNORDERED_S and reduce(lambda x, y: x==y, two_first_chars) == True:
                             case True:
                                 return BlockType.UNORDERED_LIST
