@@ -5,12 +5,13 @@ import shutil
 def init_public_dir(root='.', source='static', destination='public'):
     
     current_dir = os.getcwd()
-    current_dir = os.path.split(current_dir)[0]
 
     source_dir, destination_dir = os.path.join(*[current_dir, source]), os.path.join(*[current_dir, destination])
     # Clean public dir
-    if os.path.exists(destination_dir):
+    if os.path.exists(path=destination_dir):
         shutil.rmtree(path=destination_dir)
+
+    os.mkdir(path=destination_dir)
 
     # Add updated contents from static dir
     copy_tree(source=source_dir, destination=destination_dir)
@@ -28,5 +29,7 @@ def copy_tree(source: str, destination:str):
             shutil.copy(src=content_path, dst=destination_path)
         else:
             # else create the dir and copy it's contents recursively
+            if not os.path.exists(path=destination_path):
+                os.mkdir(path=destination_path)
             copy_tree(source=content_path, destination=destination_path)
     
