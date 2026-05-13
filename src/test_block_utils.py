@@ -265,7 +265,7 @@ the **same** even with inline stuff
 # TODO add test for empty code block or broken code block ? 
 
     def test_markdown_to_html_lists(self):
-        md = '''
+        md = MarkDownBlock(value='''
 - This is a list
 - with items
 - and _more_ items
@@ -274,22 +274,17 @@ the **same** even with inline stuff
 2. with items
 3. and more items
 
-'''
+''')
         node = markdown_to_html_node(md)
         html = node.to_html()
-        print('-----------------------')
-        print(html)
 
-        print(            '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>',
-)
-        print('-----------------------')
         self.assertEqual(
             '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>',
             html
         )
 
     def test_markdown_to_html_headings(self):
-        md = '''
+        md = MarkDownBlock(value='''
 # this is an h1
 
 this is paragraph text
@@ -307,7 +302,7 @@ this is paragraph text
 ####### this is a parapgraph
 
 ######## this is a parapgraph
-'''
+''')
         node = markdown_to_html_node(md)
         html = node.to_html()
 
@@ -315,7 +310,7 @@ this is paragraph text
             '<div><h1>this is an h1</h1><p>this is paragraph text</p><h2>this is an h2</h2><h3>this is an h3</h3><h4>this is an h4</h4><h5>this is an h5</h5><h6>this is an h6</h6><p>####### this is a parapgraph</p><p>######## this is a parapgraph</p></div>',
             html
         )
-
+# wtf TODO 
     def test_markdown_to_html_blockquote(self):
         md = '''
 > This is a
@@ -331,6 +326,88 @@ this is paragraph text
             '<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>',
             html
         )
+    
+    def test_MarkDownBlock_extract_title_order(self):
+        md = MarkDownBlock(value='''
+# this is an h1
+
+this is paragraph text
+
+## this is an h2
+
+### this is an h3
+
+
+''')
+        title = md.extract_title()
+
+        self.assertEqual(
+            'this is an h1',
+            title
+        )
+    
+    def test_MarkDownBlock_extract_title_order_two(self):
+        md = MarkDownBlock(value='''
+
+
+this is paragraph text
+
+# this is an h1
+
+## this is an h2
+
+### this is an h3
+
+
+''')
+        title = md.extract_title()
+
+        self.assertEqual(
+            'this is an h1',
+            title
+        )
+    
+    def test_MarkDownBlock_extract_title_order_last(self):
+        md = MarkDownBlock(value='''
+
+
+this is paragraph text
+
+
+
+## this is an h2
+
+### this is an h3
+                           
+# this is an h1
+
+''')
+        title = md.extract_title()
+
+        self.assertEqual(
+            'this is an h1',
+            title
+        )
+    
+    def test_MarkDownBlock_extract_title_raises(self):
+        md = MarkDownBlock(value='''
+
+
+this is paragraph text
+
+
+
+## this is an h2
+
+### this is an h3
+
+
+''') 
+        with self.assertRaises(Exception) as context:
+            _ = md.extract_title()
+
+        self.assertEqual('Invalid Markdown: No h1 found', 
+                         str(context.exception))
 
 
 if __name__ == '__main__':

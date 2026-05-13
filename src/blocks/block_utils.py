@@ -4,6 +4,15 @@ from nodes.html_node import HTMLNode
 from inline.splits import text_to_textnodes
 from nodes.parent_node import ParentNode
 from nodes.leaf_node import LeafNode
+import re 
+
+
+_MAX_HEADING_LEVEL = 6
+_HEADING_CHAR = '#'
+_CODE_S = '```'
+_UNORDERED_S = '- '
+_SINGLE_O_L = '1. '
+_QUOTE = '>'
 
 
 class MarkDownBlock(str):
@@ -15,8 +24,17 @@ class MarkDownBlock(str):
         return self.split('\n')
     
     def markdown_to_blocks(self) -> list['MarkDownBlock']:
-        return list(map(MarkDownBlock, filter(lambda l: l != '', self.split('\n\n'))))
+        return list(map(MarkDownBlock, filter(lambda l: l != '', re.split(r'\n\s*\n', self))))
     
+    def extract_title(self) -> str:
+        blocks = self.markdown_to_blocks()
+        for block in blocks:
+            if BlockType.block_to_block_type(markdown_block=block) == BlockType.HEADING:
+                if BlockType.get_heading_level(text=block) == 1:
+                    return block.lstrip(_HEADING_CHAR).lstrip()
+
+        raise Exception('Invalid Markdown: No h1 found')
+
     @staticmethod
     def sanitize(value: str) -> str:
         # remove trailing whitespace and leading new lines
@@ -30,16 +48,9 @@ class MarkDownBlock(str):
         # remove traling empty
         if lines and lines[-1] == '':
             lines.pop()
-        
+
         return '\n'.join(lines)
 
-
-_MAX_HEADING_LEVEL = 6
-_HEADING_CHAR = '#'
-_CODE_S = '```'
-_UNORDERED_S = '- '
-_SINGLE_O_L = '1. '
-_QUOTE = '>'
 
 class BlockType(Enum):
 
@@ -49,6 +60,12 @@ class BlockType(Enum):
     QUOTE = "quote"
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
+
+    @classmethod
+    def get_heading_level(cls, text: str) -> int:
+        for idx in range(min(_MAX_HEADING_LEVEL+1, len(text))):
+            if text[idx] != _HEADING_CHAR:
+                return idx
 
     @classmethod
     def block_to_block_type(cls, markdown_block: MarkDownBlock) -> 'BlockType':
@@ -128,7 +145,6 @@ class BlockType(Enum):
                                                 return BlockType.PARAGRAPH
 
 
-
 def single_line_text_to_html_nodes(text: str) -> list[LeafNode]:
     text_nodes = text_to_textnodes(text=text)
     html_nodes = [text_node.text_node_to_html_node() for text_node in text_nodes]
@@ -162,10 +178,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             case BlockType.HEADING:
                 assert len(lines) == 1
                 
-                for idx in range(min(_MAX_HEADING_LEVEL+1, len(lines[0]))):
-                    if lines[0][idx] != _HEADING_CHAR:
-                        break
-                block_node = LeafNode(tag=f'h{idx}', value=lines[0][idx:].lstrip())
+                heading_level = BlockType.get_heading_level(text=lines[0])
+                block_node = LeafNode(tag=f'h{heading_level}', 
+                                      value=lines[0][heading_level:].lstrip())
 
             case BlockType.CODE:
                 block_node.tag = 'code'
