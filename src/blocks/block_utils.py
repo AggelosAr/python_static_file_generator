@@ -2,17 +2,45 @@ from enum import Enum
 from functools import reduce
 from nodes.html_node import HTMLNode
 from inline.splits import text_to_textnodes
+from nodes.text_node import TextNode
+from nodes.parent_node import ParentNode
+from nodes.leaf_node import LeafNode
 
-Block = str
 
-MAX_HEADING_LEVEL = 6
-HEADING_CHAR = '#'
-CODE_S = '```'
-UNORDERED_S = '- '
-SINGLE_O_L = '1. '
+class MarkDownBlock(str):
 
+    def __new__(cls, value: str): 
+        return super().__new__(cls, cls.sanitize(value))
+
+    def get_lines(self) -> list[str]:
+        return self.split('\n')
+    
+    def markdown_to_blocks(self) -> list['MarkDownBlock']:
+        return list(map(MarkDownBlock, filter(lambda l: l != '', self.split('\n\n'))))
+    
+    @staticmethod
+    def sanitize(value: str) -> str:
+        value = value.lstrip('\n')
+
+        lines = value.split('\n')
+        # remove leading empty
+        if lines[0] == '':
+            lines = lines[1:]
+        # remove traling empty
+        if lines and lines[-1] == '':
+            lines.pop()
+
+        return '\n'.join(lines)
+
+
+_MAX_HEADING_LEVEL = 6
+_HEADING_CHAR = '#'
+_CODE_S = '```'
+_UNORDERED_S = '- '
+_SINGLE_O_L = '1. '
 
 class BlockType(Enum):
+
     PARAGRAPH = "paragraph"
     HEADING = "heading"
     CODE = "code"
@@ -21,17 +49,9 @@ class BlockType(Enum):
     ORDERED_LIST = "ordered_list"
 
     @classmethod
-    def block_to_block_type(cls, markdown_block: str) -> 'BlockType':
-        # TODO(***) add function to sanitize new lines and spaces 
-        # TODO maybe r/l crop whitespaces?
-        # remove leading new lines
-        markdown_block = markdown_block.lstrip('\n')
-
-        lines = markdown_block.split('\n')
-        # remove traling empty
-        if lines[-1] == '':
-            lines.pop()
-
+    def block_to_block_type(cls, markdown_block: MarkDownBlock) -> 'BlockType':
+        
+        lines = markdown_block.get_lines()
         line = lines[0]
         
         match len(lines):
@@ -46,14 +66,14 @@ class BlockType(Enum):
                         return BlockType.QUOTE
                     # check heading and check ordered_list or unordered_list of single element
                     case False:
-                        match first_character == HEADING_CHAR:
+                        match first_character == _HEADING_CHAR:
                             case True:
-                                match line[:MAX_HEADING_LEVEL-1].count(HEADING_CHAR) < MAX_HEADING_LEVEL:
+                                match line[:_MAX_HEADING_LEVEL-1].count(_HEADING_CHAR) < _MAX_HEADING_LEVEL:
                                     case True:
-                                        match MAX_HEADING_LEVEL < len(line):
+                                        match _MAX_HEADING_LEVEL < len(line):
                                             case True:
-                                                next_char = line[MAX_HEADING_LEVEL]
-                                                match next_char == HEADING_CHAR:
+                                                next_char = line[_MAX_HEADING_LEVEL]
+                                                match next_char == _HEADING_CHAR:
                                                     case True:
                                                         return BlockType.PARAGRAPH
                                                     case _:
@@ -65,74 +85,89 @@ class BlockType(Enum):
                             case False:
                                 # check ordered_list
                                 # check unordered_list
-                                match line[:len(UNORDERED_S)] == UNORDERED_S:
+                                match line[:len(_UNORDERED_S)] == _UNORDERED_S:
                                     case True:
                                         return BlockType.UNORDERED_LIST
                                     case False:
-                                        match line[:len(SINGLE_O_L)] == SINGLE_O_L:
+                                        match line[:len(_SINGLE_O_L)] == _SINGLE_O_L:
                                             case True:
                                                 return BlockType.ORDERED_LIST
                                             case _:
                                                 return BlockType.PARAGRAPH
             case _:
                 # check code
-                match CODE_S == line and lines[-1][-len(CODE_S):] == CODE_S:
+                match _CODE_S == line and lines[-1][-len(_CODE_S):] == _CODE_S:
                     case True:
                         return BlockType.CODE
                     case _:
                         # check unordered_list
                         # check ordered_list
                         # check paragraph
-                        three_first_chars = [l[:len(SINGLE_O_L)] for l in lines]
-                        two_first_chars = [l[:len(UNORDERED_S)] for l in lines]
-                        match two_first_chars[0] == UNORDERED_S and reduce(lambda x, y: x==y, two_first_chars) == True:
+                        thre_frst_chrs = [l[:len(_SINGLE_O_L)] for l in lines]
+                        two_frst_chrs = [l[:len(_UNORDERED_S)] for l in lines]
+                        match two_frst_chrs[0] == _UNORDERED_S and reduce(lambda x, y: x==y, two_frst_chrs) == True:
                             case True:
                                 return BlockType.UNORDERED_LIST
                             case _:
                                 # check ordered_list
                                 # check paragraph
-                                match three_first_chars == [f'{i}. ' for i in range(1, len(lines)+1)]:
+                                match thre_frst_chrs == [f'{i}. ' for i in range(1, len(lines)+1)]:
                                     case True:
                                         return BlockType.ORDERED_LIST
                                     case _:
                                         return BlockType.PARAGRAPH
-                
 
-def markdown_to_blocks(markdown: str) -> list[Block]:
-    return list(filter(lambda l: l != '', map(lambda l: l.lstrip('\n').strip(), markdown.split('\n\n'))))
 
+
+# Todo add test for this
+def single_line_text_to_html_nodes(text: str) -> list[LeafNode]:
+    text_nodes = text_to_textnodes(text=text)
+    html_nodes = [text_node.text_node_to_html_node() for text_node in text_nodes]
+    return html_nodes
+    
 
 def markdown_to_html_node(markdown: str) -> HTMLNode:
     
-    root = HTMLNode(tag='div', children=[])
+    root = ParentNode(tag='div', children=[])
 
-    for block in markdown_to_blocks(markdown=markdown):
+    for block in MarkDownBlock(value=markdown).markdown_to_blocks():
 
-        # TODO this var is useless ?!
-        block_root = HTMLNode(tag='div', children=[])
-        # TODO(***) add function to sanitize new lines and spaces 
-        lines = block .split('\n')
+        lines = block.get_lines()
+
+        block_node = ParentNode(tag=None, children=[])
+
         match BlockType.block_to_block_type(markdown_block=block):
+
             case BlockType.PARAGRAPH:
+                
+                block_node.tag = 'p'
+
                 for line in lines:
-                    block_root.children.extend(text_to_textnodes(text=line))
+                    nodes = single_line_text_to_html_nodes(text=line)
+                    print('NODES-> ', nodes)
+                    print('NODES-> ', type(nodes))
+                    block_node.add_children(nodes)
+                    # seperate each line by a space (except the last one)
+                    block_node.add_children(LeafNode(value=' ', tag=None))
+                block_node.children.pop()
+                
             case BlockType.HEADING:
                 # This should assert len of lines is 1.
                 # I assume there is no point of more lines in this context.
-                for line in lines:
-                    block_root.children.extend(text_to_textnodes(text=line))
-            case BlockType.CODE:
-                block_root.children.extend()
-            case BlockType.QUOTE:
-                # This should assert len of lines is 1.
-                # I assume there is no point of more lines in this context.
-                for line in lines:
-                    block_root.children.extend(text_to_textnodes(text=line))
-            case BlockType.UNORDERED_LIST:
-                block_root.children.extend()
-            case BlockType.ORDERED_LIST:
-                block_root.children.extend()
+                block_node.tag = 'p'
 
-        root.children.extend(block_root.children)
+            case BlockType.CODE:
+                block_node.tag = 'p'
+
+            case BlockType.QUOTE:
+                block_node.tag = 'p'
+
+            case BlockType.UNORDERED_LIST:
+                block_node.tag = 'p'
+
+            case BlockType.ORDERED_LIST:
+                block_node.tag = 'p'
+
+        root.add_children(_from=block_node)
 
     return root
