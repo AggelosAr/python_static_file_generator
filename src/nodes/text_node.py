@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Literal
 
-from .html_node import HTMLNode
+from .leaf_node import LeafNode
 
 
 # TODO maybe add a connector here for the text_node_to_html_node match logic and text_type?
@@ -43,22 +43,22 @@ class TextNode:
         self.text_type = text_type
         self.url = url
     
-    def text_node_to_html_node(self) -> HTMLNode:
+    def text_node_to_html_node(self) -> LeafNode:
         match self.text_type:
             case TextType.TEXT:
-                return HTMLNode(value=self.text)
+                return LeafNode(value=self.text)
             case TextType.BOLD_TEXT:
-                return HTMLNode(tag='b', value=self.text)
+                return LeafNode(tag='b', value=self.text)
             case TextType.ITALIC_TEXT:
-                return HTMLNode(tag='i', value=self.text)
+                return LeafNode(tag='i', value=self.text)
             case TextType.CODE_TEXT:
-                return HTMLNode(tag='code', value=self.text)
+                return LeafNode(tag='code', value=self.text)
             case TextType.LINK:
-                return HTMLNode(tag='a', 
+                return LeafNode(tag='a', 
                                 value=self.text, 
                                 props={'href': self.url})
             case TextType.IMAGE:
-                return HTMLNode(tag='img', 
+                return LeafNode(tag='img', 
                                 props={'src': self.url,
                                        'alt': self.text})
 
