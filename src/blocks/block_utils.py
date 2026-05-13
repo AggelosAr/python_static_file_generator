@@ -37,8 +37,8 @@ class MarkDownBlock(str):
 
     @staticmethod
     def sanitize(value: str) -> str:
-        # remove trailing whitespace and leading new lines
-        value = value.lstrip('\n').rstrip()
+        # remove leading new lines
+        value = value.lstrip('\n')
 
         lines = value.split('\n')
 
@@ -72,7 +72,7 @@ class BlockType(Enum):
         
         lines = markdown_block.get_lines()
         line = lines[0]
-        
+        print('------------------> ', lines)
         match len(lines):
             
             case 0:
