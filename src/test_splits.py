@@ -1,7 +1,7 @@
 import unittest
 
 from nodes.text_node import TextType, TextNode
-from inline.splits import split_nodes_delimiter, split_node_with_delimiter, split_nodes_image, split_nodes_link
+from inline.splits import split_nodes_delimiter, split_node_with_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
 
 
 # TODO add tests for LINK and IMAGE TextTypes
@@ -129,7 +129,7 @@ class TestTextNode(unittest.TestCase):
                 TextNode(text=' and another ', text_type=TextType.TEXT),
                 TextNode(text='second image', text_type=TextType.IMAGE, url='https://i.imgur.com/3elNhQu.png'),
             ],
-            new_nodes,
+            new_nodes
         )
     
     def test_split_image(self):
@@ -142,7 +142,7 @@ class TestTextNode(unittest.TestCase):
                 TextNode(text='This is text with an ', text_type=TextType.TEXT),
                 TextNode(text='image', text_type=TextType.IMAGE, url='https://i.imgur.com/zjjcJKZ.png'),
             ],
-            new_nodes,
+            new_nodes
         )
 
     def test_split_image_single(self):
@@ -154,7 +154,7 @@ class TestTextNode(unittest.TestCase):
             [
                 TextNode(text='image', text_type=TextType.IMAGE, url='https://www.example.COM/IMAGE.PNG'),
             ],
-            new_nodes,
+            new_nodes
         )
     
     def test_split_links(self):
@@ -172,9 +172,28 @@ class TestTextNode(unittest.TestCase):
                 TextNode(text='another link', text_type=TextType.LINK, url='https://wikipedia.org'),
                 TextNode(text=' with text that follows', text_type=TextType.TEXT)
             ],
-            new_nodes,
+            new_nodes
         )
+    
+    def test_text_to_textnodes(self):
+        text = 'This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)'
+        nodes = text_to_textnodes(text=text)
 
+        self.assertListEqual(
+            [
+                TextNode(text='This is ', text_type=TextType.TEXT),
+                TextNode(text='text', text_type=TextType.BOLD_TEXT),
+                TextNode(text=' with an ', text_type=TextType.TEXT),
+                TextNode(text='italic', text_type=TextType.ITALIC_TEXT),
+                TextNode(text=' word and a ', text_type=TextType.TEXT),
+                TextNode(text='code block', text_type=TextType.CODE_TEXT),
+                TextNode(text=' and an ', text_type=TextType.TEXT),
+                TextNode(text='obi wan image', text_type=TextType.IMAGE, url='https://i.imgur.com/fJRm4Vk.jpeg'),
+                TextNode(text=' and a ', text_type=TextType.TEXT),
+                TextNode(text='link', text_type=TextType.LINK, url='https://boot.dev'),
+            ],
+            nodes
+        )
 
 if __name__ == '__main__':
     unittest.main()
