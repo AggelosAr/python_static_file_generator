@@ -3,7 +3,7 @@ from .link_extractor import extract_markdown_images, extract_markdown_links
 
 
 # todo We Don't Care About Nested Inline Elements
-# todo text_type is ignored.
+# todo text_type is ignored. maybe the type needs to be forced?
 def split_nodes_delimiter(old_nodes: list[TextNode], 
                           delimiter: str, 
                           text_type: TextType) -> list[TextNode]:
@@ -138,6 +138,7 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 
 
 def text_to_textnodes(text: str) -> list[TextNode]:
+    # Text is a single line of text, maybe add types... (TODO)
     nodes = [TextNode(text=text, text_type=TextType.TEXT)]
     simple_delimiters = ['**', '_', '`']
 

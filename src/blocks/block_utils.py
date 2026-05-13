@@ -1,7 +1,7 @@
 from enum import Enum
 from functools import reduce
 from nodes.html_node import HTMLNode
-
+from inline.splits import text_to_textnodes
 
 Block = str
 
@@ -22,6 +22,7 @@ class BlockType(Enum):
 
     @classmethod
     def block_to_block_type(cls, markdown_block: str) -> 'BlockType':
+        # TODO(***) add function to sanitize new lines and spaces 
         # TODO maybe r/l crop whitespaces?
         # remove leading new lines
         markdown_block = markdown_block.lstrip('\n')
@@ -107,18 +108,31 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
     for block in markdown_to_blocks(markdown=markdown):
 
+        # TODO this var is useless ?!
+        block_root = HTMLNode(tag='div', children=[])
+        # TODO(***) add function to sanitize new lines and spaces 
+        lines = block .split('\n')
         match BlockType.block_to_block_type(markdown_block=block):
             case BlockType.PARAGRAPH:
-                root.children.extend()
+                for line in lines:
+                    block_root.children.extend(text_to_textnodes(text=line))
             case BlockType.HEADING:
-                root.children.extend()
+                # This should assert len of lines is 1.
+                # I assume there is no point of more lines in this context.
+                for line in lines:
+                    block_root.children.extend(text_to_textnodes(text=line))
             case BlockType.CODE:
-                root.children.extend()
+                block_root.children.extend()
             case BlockType.QUOTE:
-                root.children.extend()
+                # This should assert len of lines is 1.
+                # I assume there is no point of more lines in this context.
+                for line in lines:
+                    block_root.children.extend(text_to_textnodes(text=line))
             case BlockType.UNORDERED_LIST:
-                root.children.extend()
+                block_root.children.extend()
             case BlockType.ORDERED_LIST:
-                root.children.extend()
+                block_root.children.extend()
+
+        root.children.extend(block_root.children)
 
     return root
