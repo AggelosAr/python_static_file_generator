@@ -71,6 +71,7 @@ class TestTextNode(unittest.TestCase):
         html_node = node.text_node_to_html_node()
 
         self.assertEqual('img', html_node.tag)
+        self.assertEqual('', html_node.value)
         self.assertEqual({'src': 'https://example.com/image.png',
                           'alt': 'image alt'}, 
                           html_node.props)
@@ -81,7 +82,7 @@ class TestTextNode(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             _ = node.text_node_to_html_node()
 
-        self.assertEqual('Invalid text type: invalid_type', str(context.exception))
+        self.assertEqual(f'Invalid text type: invalid_type', str(context.exception))
 
     def test___str__(self):
         node = TextNode(text='This is a text node', text_type=TextType.BOLD_TEXT)
