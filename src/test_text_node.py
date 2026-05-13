@@ -1,7 +1,7 @@
 import unittest
 
 from nodes.text_node import TextNode, TextType
-from nodes.html_node import HTMLNode
+
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
