@@ -78,7 +78,7 @@ class BlockType(Enum):
         
         lines = markdown_block.get_lines()
         line = lines[0]
-        print('------------------> ', lines)
+
         match len(lines):
             
             case 0:
