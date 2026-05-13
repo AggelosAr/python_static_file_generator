@@ -37,16 +37,22 @@ class MarkDownBlock(str):
 
     @staticmethod
     def sanitize(value: str) -> str:
+
         # remove leading new lines
         value = value.lstrip('\n')
 
         lines = value.split('\n')
 
-        # remove leading empty
-        if lines[0] == '':
+        # remove leading empty. TODO maybe needs remove N leading empty space.
+        if len(lines) > 1 and lines[0] == '':
             lines = lines[1:]
+
         # remove traling empty
-        if lines and lines[-1] == '':
+        if len(lines) > 1 and lines[-1] == '':
+            lines.pop()
+
+        # Special case -> remove the last line with all spaces
+        if len(lines[-1]) and len(set(lines[-1])) == 1 and lines[-1][-1] == ' ':
             lines.pop()
 
         return '\n'.join(lines)
