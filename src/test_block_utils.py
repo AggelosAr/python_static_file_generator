@@ -208,35 +208,21 @@ This is another paragraph with _italic_ text and `code` here
             html
         )
 
-#     def test_markdown_to_html_codeblock(self):
-#         md = MarkDownBlock(value='''
-# ```
-# This is text that _should_ remain
-# the **same** even with inline stuff
-# ```
-# '''
-#         node = markdown_to_html_node(markdown=md)
-#         html = node.to_html()
+    def test_markdown_to_html_codeblock(self):
+        md = MarkDownBlock(value='''
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+''')
+        node = markdown_to_html_node(markdown=md)
+        html = node.to_html()
 
-#         self.assertEqual(
-#             '<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>',
-#             html
-#         )
-
-#     def test_markdown_to_html_codeblock_broken_code(self):
-#         md = MarkDownBlock(value='''
-#     ```
-# This is text that _should_ remain
-# the **same** even with inline stuff
-# ```
-# '''
-#         node = markdown_to_html_node(markdown=md)
-#         html = node.to_html()
-
-#         self.assertEqual(
-#             '<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>',
-#             html
-#         )
+        self.assertEqual(
+            '<div><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></div>',
+            html
+        )
+# TODO add test for empty code block or broken code block ? 
 
 
 if __name__ == '__main__':

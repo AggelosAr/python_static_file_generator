@@ -147,24 +147,49 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                     block_node.add_children(nodes)
                     # seperate each line by a space (except the last one)
                     block_node.add_children(LeafNode(value=' ', tag=None))
+                # At this point we can safely pop to remove the last ' ' Empty leaf node
                 block_node.children.pop()
                 
             case BlockType.HEADING:
-                # This should assert len of lines is 1.
-                # I assume there is no point of more lines in this context.
-                block_node.tag = 'p'
+                
+                for idx in range(len(line)):
+                    if line[idx] != '#':
+                        break
+                block_node.tag = f'h{idx}'
+                block_node.value = line.lstrip('#')
 
             case BlockType.CODE:
-                block_node.tag = 'p'
+                block_node.tag = 'code'
+
+                # In code block we do not apply markdown conversion!
+                for line in lines[1:-1]: 
+                    
+                    nodes = LeafNode(value=line, tag=None)
+                    block_node.add_children(nodes)
+                    # seperate each line by a \n (except the last one)
+                    block_node.add_children(LeafNode(value='\n', tag=None))
 
             case BlockType.QUOTE:
-                block_node.tag = 'p'
+                block_node.tag = '<blockquote>'
+                block_node.value = line
 
             case BlockType.UNORDERED_LIST:
-                block_node.tag = 'p'
+                block_node.tag = 'ul'
+                for line in lines: 
+                    
+                    nodes = LeafNode(value=line, tag='li')
+                    block_node.add_children(nodes)
+                    # seperate each line by a \n (except the last one)
+                    block_node.add_children(LeafNode(value='\n', tag=None))
 
             case BlockType.ORDERED_LIST:
-                block_node.tag = 'p'
+                block_node.tag = 'ol'
+                for line in lines: 
+                    
+                    nodes = LeafNode(value=line, tag='li')
+                    block_node.add_children(nodes)
+                    # seperate each line by a \n (except the last one)
+                    block_node.add_children(LeafNode(value='\n', tag=None))
 
         root.add_children(_from=block_node)
 
