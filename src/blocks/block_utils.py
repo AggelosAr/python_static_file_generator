@@ -2,7 +2,6 @@ from enum import Enum
 from functools import reduce
 from nodes.html_node import HTMLNode
 from inline.splits import text_to_textnodes
-from nodes.text_node import TextNode
 from nodes.parent_node import ParentNode
 from nodes.leaf_node import LeafNode
 
@@ -38,6 +37,7 @@ _HEADING_CHAR = '#'
 _CODE_S = '```'
 _UNORDERED_S = '- '
 _SINGLE_O_L = '1. '
+_QUOTE = '>'
 
 class BlockType(Enum):
 
@@ -60,7 +60,7 @@ class BlockType(Enum):
                 return BlockType.PARAGRAPH
             case 1:
                 first_character = line[0]
-                match first_character == '>':
+                match first_character == _QUOTE:
                     # check quote
                     case True:
                         return BlockType.QUOTE
@@ -100,6 +100,7 @@ class BlockType(Enum):
                     case True:
                         return BlockType.CODE
                     case _:
+                        # check multi line quote
                         # check unordered_list
                         # check ordered_list
                         # check paragraph
@@ -115,7 +116,13 @@ class BlockType(Enum):
                                     case True:
                                         return BlockType.ORDERED_LIST
                                     case _:
-                                        return BlockType.PARAGRAPH
+                                        # check multi line quote
+                                        # check paragraph
+                                        match [l[:len(_QUOTE)] for l in lines] == [_QUOTE for _ in range(len(lines))]:
+                                            case True:
+                                                return BlockType.QUOTE
+                                            case _:
+                                                return BlockType.PARAGRAPH
 
 
 
@@ -151,12 +158,12 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 block_node.children.pop()
                 
             case BlockType.HEADING:
+                assert len(lines) == 1
                 
-                for idx in range(len(line)):
-                    if line[idx] != '#':
+                for idx in range(min(_MAX_HEADING_LEVEL+1, len(lines[0]))):
+                    if lines[0][idx] != _HEADING_CHAR:
                         break
-                block_node.tag = f'h{idx}'
-                block_node.value = line.lstrip('#')
+                block_node = LeafNode(tag=f'h{idx}', value=lines[0][idx:].lstrip())
 
             case BlockType.CODE:
                 block_node.tag = 'code'
@@ -170,8 +177,17 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                     block_node.add_children(LeafNode(value='\n', tag=None))
 
             case BlockType.QUOTE:
-                block_node.tag = '<blockquote>'
-                block_node.value = line
+                block_node.tag = 'blockquote'
+
+                # In quote block we do not apply markdown conversion!
+                for line in lines: 
+                    
+                    nodes = LeafNode(value=line.lstrip(_QUOTE).lstrip(), tag=None)
+                    block_node.add_children(nodes)
+                    # seperate each line by a space (except the last one)
+                    block_node.add_children(LeafNode(value=' ', tag=None))
+                # At this point we can safely pop to remove the last ' ' Empty leaf node
+                block_node.children.pop()
 
             case BlockType.UNORDERED_LIST:
                 block_node.tag = 'ul'
