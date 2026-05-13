@@ -26,7 +26,7 @@ class MarkDownBlock(str):
     def markdown_to_blocks(self) -> list['MarkDownBlock']:
         return list(map(MarkDownBlock, filter(lambda l: l != '', re.split(r'\n\s*\n', self))))
     
-    def extract_title(self) -> str:
+    def extract_title(self) -> str | None:
         blocks = self.markdown_to_blocks()
         for block in blocks:
             if BlockType.block_to_block_type(markdown_block=block) == BlockType.HEADING:
