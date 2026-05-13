@@ -129,7 +129,6 @@ class BlockType(Enum):
 
 
 
-# Todo add test for this
 def single_line_text_to_html_nodes(text: str) -> list[LeafNode]:
     text_nodes = text_to_textnodes(text=text)
     html_nodes = [text_node.text_node_to_html_node() for text_node in text_nodes]
