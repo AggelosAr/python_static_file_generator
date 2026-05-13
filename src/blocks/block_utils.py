@@ -1,5 +1,9 @@
 from enum import Enum
 from functools import reduce
+from nodes.html_node import HTMLNode
+
+
+Block = str
 
 MAX_HEADING_LEVEL = 6
 HEADING_CHAR = '#'
@@ -18,7 +22,7 @@ class BlockType(Enum):
 
     @classmethod
     def block_to_block_type(cls, markdown_block: str) -> 'BlockType':
-        # TODO maybe r crop whitespaces?
+        # TODO maybe r/l crop whitespaces?
         # remove leading new lines
         markdown_block = markdown_block.lstrip('\n')
 
@@ -93,5 +97,28 @@ class BlockType(Enum):
                                         return BlockType.PARAGRAPH
                 
 
-def markdown_to_blocks(markdown: str) -> list[str]:
+def markdown_to_blocks(markdown: str) -> list[Block]:
     return list(filter(lambda l: l != '', map(lambda l: l.lstrip('\n').strip(), markdown.split('\n\n'))))
+
+
+def markdown_to_html_node(markdown: str) -> HTMLNode:
+    
+    root = HTMLNode(tag='div', children=[])
+
+    for block in markdown_to_blocks(markdown=markdown):
+
+        match BlockType.block_to_block_type(markdown_block=block):
+            case BlockType.PARAGRAPH:
+                root.children.extend()
+            case BlockType.HEADING:
+                root.children.extend()
+            case BlockType.CODE:
+                root.children.extend()
+            case BlockType.QUOTE:
+                root.children.extend()
+            case BlockType.UNORDERED_LIST:
+                root.children.extend()
+            case BlockType.ORDERED_LIST:
+                root.children.extend()
+
+    return root

@@ -1,6 +1,7 @@
 from nodes.text_node import TextNode
 
 
+# TODO refactor test structure
 def main():
     text_node = TextNode(text='This is some anchor text',
                          text_type='link',

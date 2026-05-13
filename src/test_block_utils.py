@@ -1,6 +1,6 @@
 import unittest
 
-from blocks.block_utils import markdown_to_blocks, BlockType
+from blocks.block_utils import markdown_to_blocks, BlockType, markdown_to_html_node
 
 
 class TestTextNode(unittest.TestCase):
@@ -131,7 +131,7 @@ This is a normal paragraph.
         md = '''
 ```
 python
-print("Hello, world!")
+print('Hello, world!')
 ```
 '''
         self.assertEqual(BlockType.CODE, BlockType.block_to_block_type(markdown_block=md))
@@ -190,6 +190,52 @@ print("Hello, world!")
 3.   l
 '''
         self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
+
+    def test_markdown_to_html_paragraphs(self):
+        md = '''
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+'''
+        node = markdown_to_html_node(markdown=md)
+        html = node.to_html()
+
+        self.assertEqual(
+            '<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>',
+            html
+        )
+
+    def test_markdown_to_html_codeblock(self):
+        md = '''
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+'''
+        node = markdown_to_html_node(markdown=md)
+        html = node.to_html()
+
+        self.assertEqual(
+            '<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>',
+            html
+        )
+    def test_markdown_to_html_codeblock_broken_code(self):
+        md = '''
+    ```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+'''
+        node = markdown_to_html_node(markdown=md)
+        html = node.to_html()
+
+        self.assertEqual(
+            '<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>',
+            html
+        )
 
 
 if __name__ == '__main__':
