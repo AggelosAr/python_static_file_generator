@@ -1,3 +1,5 @@
+from typing import Union
+
 
 # Todo for tag assert it doesnt conttain < and > or maybe a enum of tags
 # Todo maybe add comparison method.
@@ -14,6 +16,16 @@ class HTMLNode:
         self.value = value
         self.children = children
         self.props = props
+    
+    # TODO add test
+    def add_children(self, _from: Union['HTMLNode', list['HTMLNode']]):
+        if isinstance(_from, list):
+            self.children.extend(_from)
+            return
+        elif isinstance(_from, HTMLNode):
+            self.children.extend([_from])
+            return
+        raise Exception('Can only add children as list of HTMLNode or single HTMLNode.')
 
     def to_html(self):
         raise NotImplementedError('Only children of this class should implement this method!')
