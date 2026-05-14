@@ -25,8 +25,13 @@ class ParentNode(HTMLNode):
 
         for child in self.children:
             html.append(child.to_html())
-
-        return f'{start}{"".join(html)}{end}'
+        
+        middle = "".join(html)
+        # Patch code blocks (TODO(3) refactor) 
+        if self.tag == 'code':
+            return f'<pre>{start}{middle}{end}</pre>'
+    
+        return f'{start}{middle}{end}'
 
     def __str__(self):
         return f'ParentNode({self.tag}, children: {self.children}, {self.props})'

@@ -22,6 +22,10 @@ class LeafNode(HTMLNode):
         middle = f'{self.value}'
         end = f'{tag_start}{html_tag_close}{self.tag}{tag_close}'
 
+        # Patch code blocks (TODO(3) refactor) 
+        if self.tag == 'code':
+            return f'<pre>{start}{middle}{end}</pre>'
+        
         return f'{start}{middle}{end}'
     
     def __str__(self):

@@ -244,7 +244,7 @@ This is another paragraph with _italic_ text and `code` here
         html = node.to_html()
 
         self.assertEqual(
-            '<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>',
+            '<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <pre><code>code</code></pre> here</p></div>',
             html
         )
 
@@ -259,7 +259,7 @@ the **same** even with inline stuff
         html = node.to_html()
 
         self.assertEqual(
-            '<div><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></div>',
+            '<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>',
             html
         )
 # TODO add test for empty code block or broken code block ? 
@@ -279,7 +279,7 @@ the **same** even with inline stuff
         html = node.to_html()
 
         self.assertEqual(
-            '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>',
+            '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <pre><code>ordered</code></pre> list</li><li>with items</li><li>and more items</li></ol></div>',
             html
         )
 
