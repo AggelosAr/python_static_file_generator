@@ -214,6 +214,19 @@ print('Hello, world!')
 ''')
         self.assertEqual(BlockType.PARAGRAPH, BlockType.block_to_block_type(markdown_block=md))
 
+    def test_block_to_block_type_bold_heading(self):
+        md = MarkDownBlock(value='''
+# This is a **bold heading**
+''')
+        node = markdown_to_html_node(markdown=md)
+        html = node.to_html()
+
+        self.assertEqual(
+            '<div><h1>This is a <b>bold heading</b></h1></div>',
+            html
+        )
+
+
     def test_markdown_to_html_paragraph(self):
         md = MarkDownBlock(value='''
 This is **bolded** paragraph
@@ -269,6 +282,7 @@ the **same** even with inline stuff
 - This is a list
 - with items
 - and _more_ items
+- and **more** items
 
 1. This is an `ordered` list
 2. with items
@@ -279,7 +293,7 @@ the **same** even with inline stuff
         html = node.to_html()
 
         self.assertEqual(
-            '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <pre><code>ordered</code></pre> list</li><li>with items</li><li>and more items</li></ol></div>',
+            '<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li><li>and <b>more</b> items</li></ul><ol><li>This is an <pre><code>ordered</code></pre> list</li><li>with items</li><li>and more items</li></ol></div>',
             html
         )
 

@@ -185,9 +185,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 assert len(lines) == 1
                 
                 heading_level = BlockType.get_heading_level(text=lines[0])
-                block_node = LeafNode(tag=f'h{heading_level}', 
-                                      value=lines[0][heading_level:].lstrip())
-
+                nodes = single_line_text_to_html_nodes(text=lines[0][heading_level:].lstrip())
+                block_node = ParentNode(tag=f'h{heading_level}', children=nodes)
+                
             case BlockType.CODE:
                 block_node.tag = 'code'
 
