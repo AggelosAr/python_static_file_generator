@@ -42,10 +42,10 @@ def generate_page(from_path: str='content/index.md',
 
     print(f'Generating page from {from_path} to {dest_path} using {template_path}')
 
-    with open(os.path.join(*[os.getcwd(), from_path]), 'r') as file:
+    with open(from_path, 'r') as file:
         markdown_data = file.read()
     
-    with open(os.path.join(*[os.getcwd(), template_path]), 'r') as file:
+    with open(template_path, 'r') as file:
         template_data = file.read()
 
     title = MarkDownBlock(markdown_data).extract_title()
@@ -54,16 +54,23 @@ def generate_page(from_path: str='content/index.md',
     html_string = markdown_to_html_node(markdown=markdown_data).to_html()
     formatted_template_data = template_data.replace('{{ Content }}', html_string)
 
-    with open(os.path.join(*[os.getcwd(), dest_path]), 'w') as file:
+    with open(dest_path, 'w') as file:
         file.write(formatted_template_data)
 
 
 def generate_pages(search_path: str='content'):
     for content in os.listdir(path=search_path):
         content_path = os.path.join(*[search_path, content])
+
+        path_parts = os.path.splitext(content_path)
+        path = path_parts[0].replace('content', 'public')
+        ext = path_parts[1]
+        
         if os.path.isfile(content_path):
-            s_path = os.path.splitext(content_path)
-            if s_path[1] == '.md':
-                generate_page(from_path=content_path, dest_path=f"public/{s_path[0].split('/')[-1]}.html")
+
+            if ext == '.md':
+                generate_page(from_path=content_path, dest_path=f'{path}.html')
         else:
+            if not os.path.exists(path):
+                os.mkdir(path=path)
             generate_pages(search_path=content_path)
