@@ -56,3 +56,14 @@ def generate_page(from_path: str='content/index.md',
 
     with open(os.path.join(*[os.getcwd(), dest_path]), 'w') as file:
         file.write(formatted_template_data)
+
+
+def generate_pages(search_path: str='content'):
+    for content in os.listdir(path=search_path):
+        content_path = os.path.join(*[search_path, content])
+        if os.path.isfile(content_path):
+            s_path = os.path.splitext(content_path)
+            if s_path[1] == '.md':
+                generate_page(from_path=content_path, dest_path=f"public/{s_path[0].split('/')[-1]}.html")
+        else:
+            generate_pages(search_path=content_path)
