@@ -1,3 +1,5 @@
+from blocks.block_utils import markdown_to_html_node, MarkDownBlock
+
 import os 
 import shutil
 
@@ -33,3 +35,24 @@ def copy_tree(source: str, destination:str):
                 os.mkdir(path=destination_path)
             copy_tree(source=content_path, destination=destination_path)
     
+
+def generate_page(from_path: str='content/index.md', 
+                  template_path: str='template.html', 
+                  dest_path: str='public/index.html'):
+
+    print(f'Generating page from {from_path} to {dest_path} using {template_path}')
+
+    with open(os.path.join(*[os.getcwd(), from_path]), 'r') as file:
+        markdown_data = file.read()
+    
+    with open(os.path.join(*[os.getcwd(), template_path]), 'r') as file:
+        template_data = file.read()
+
+    title = MarkDownBlock(markdown_data).extract_title()
+    formatted_template_data = template_data.replace('{{ Title }}', title)
+
+    html_string = markdown_to_html_node(markdown=markdown_data).to_html()
+    formatted_template_data = template_data.replace('{{ Content }}', html_string)
+
+    with open(os.path.join(*[os.getcwd(), dest_path]), 'w') as file:
+        file.write(formatted_template_data)
