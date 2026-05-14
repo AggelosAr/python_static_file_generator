@@ -1,1 +1,1 @@
-python3 src/main.py "/AggelosAr/"
+python3 src/main.py "https://aggelosar.github.io/python_static_file_generator/"
