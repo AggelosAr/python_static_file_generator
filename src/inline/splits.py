@@ -48,7 +48,7 @@ def split_node_with_delimiter(old_node: TextNode,
             while old_node.text[idx] != delimiter[0]:
                 current_split.append(old_node.text[idx])
                 idx += 1
-            while old_node.text[idx] == delimiter[0]:
+            while idx < len(old_node.text) and old_node.text[idx] == delimiter[0]:
                 idx += 1
 
             new_node = TextNode(text=''.join(current_split), 
@@ -56,14 +56,15 @@ def split_node_with_delimiter(old_node: TextNode,
             new_nodes.append(new_node)
             current_split = []
         
-        current_split.append(old_node.text[idx])
+        if idx < len(old_node.text):
+            current_split.append(old_node.text[idx])
         idx += 1
 
     if current_split:
         new_node = TextNode(text=''.join(current_split), 
                                 text_type=TextType.TEXT)
         new_nodes.append(new_node)
-
+    
     return new_nodes
 
 

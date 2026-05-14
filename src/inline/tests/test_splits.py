@@ -101,6 +101,20 @@ class TestTextNode(unittest.TestCase):
         ]
         self.assertEqual(expected, new_nodes)
     
+    def test_split_nodes_delimiter_list_with_double_element(self):
+        node = TextNode(text='This is text with a `code block` word `code block`', text_type=TextType.TEXT)
+        new_nodes = split_nodes_delimiter(old_nodes=[node], 
+                                          delimiter='`', 
+                                          text_type=TextType.CODE_TEXT)
+
+        expected = [
+            TextNode(text='This is text with a ', text_type=TextType.TEXT),
+            TextNode(text='code block', text_type=TextType.CODE_TEXT),
+            TextNode(text=' word ', text_type=TextType.TEXT),
+            TextNode(text='code block', text_type=TextType.CODE_TEXT)
+        ]
+        self.assertEqual(expected, new_nodes)
+
     def test_split_nodes_delimiter_list_with_two_elements(self):
         node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
         node_2 = TextNode(text='This has **bold text** inside', text_type=TextType.TEXT)
