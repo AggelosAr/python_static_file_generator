@@ -19,10 +19,10 @@ class TestParentNode(unittest.TestCase):
         parent_node = self.get_sample_test_parent_node_no_props()
         
         self.assertEqual('p', parent_node.tag)
-        self.assertEqual('LeafNode(b, Bold text, None)', parent_node.children[0].__str__())
-        self.assertEqual('LeafNode(None, Normal text, None)', parent_node.children[1].__str__())
-        self.assertEqual('LeafNode(i, italic text, None)', parent_node.children[2].__str__())
-        self.assertEqual('LeafNode(None, Normal text, None)', parent_node.children[3].__str__())
+        self.assertEqual('LeafNode(b, Bold text, {})', parent_node.children[0].__str__())
+        self.assertEqual('LeafNode(None, Normal text, {})', parent_node.children[1].__str__())
+        self.assertEqual('LeafNode(i, italic text, {})', parent_node.children[2].__str__())
+        self.assertEqual('LeafNode(None, Normal text, {})', parent_node.children[3].__str__())
         
     def test_to_html_tag_missing(self):
         parent_node = self.get_sample_test_parent_node_no_props()

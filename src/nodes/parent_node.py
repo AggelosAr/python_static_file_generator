@@ -1,12 +1,13 @@
+from typing import Sequence
+
 from .html_node import HTMLNode
-from .leaf_node import LeafNode
 
 
 class ParentNode(HTMLNode):
 
     def __init__(self,
                  tag: str | None,
-                 children: list['ParentNode', LeafNode],
+                 children: Sequence[HTMLNode],
                  props: dict | None = None):
         
         super().__init__(tag=tag, children=children, props=props)

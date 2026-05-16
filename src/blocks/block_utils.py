@@ -1,5 +1,5 @@
 from enum import Enum
-from functools import reduce
+from typing import Sequence
 from nodes.html_node import HTMLNode
 from inline.splits import text_to_textnodes
 from nodes.parent_node import ParentNode
@@ -26,7 +26,7 @@ class MarkDownBlock(str):
     def markdown_to_blocks(self) -> list['MarkDownBlock']:
         return list(map(MarkDownBlock, filter(lambda l: l != '', re.split(r'\n\s*\n', self))))
     
-    def extract_title(self) -> str | None:
+    def extract_title(self) -> str:
         blocks = self.markdown_to_blocks()
         for block in blocks:
             if BlockType.block_to_block_type(markdown_block=block) == BlockType.HEADING:
@@ -72,6 +72,7 @@ class BlockType(Enum):
         for idx in range(min(_MAX_HEADING_LEVEL+1, len(text))):
             if text[idx] != _HEADING_CHAR:
                 return idx
+        raise Exception('Did not find a header.')
 
     @classmethod
     def block_to_block_type(cls, markdown_block: MarkDownBlock) -> 'BlockType':
@@ -151,7 +152,7 @@ class BlockType(Enum):
                                                 return BlockType.PARAGRAPH
 
 
-def single_line_text_to_html_nodes(text: str) -> list[LeafNode]:
+def single_line_text_to_html_nodes(text: str) -> Sequence[LeafNode]:
     text_nodes = text_to_textnodes(text=text)
     html_nodes = [text_node.text_node_to_html_node() for text_node in text_nodes]
     return html_nodes
@@ -175,9 +176,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
                 for line in lines:
                     nodes = single_line_text_to_html_nodes(text=line)
-                    block_node.add_children(nodes)
+                    block_node.add_children(_from=nodes)
                     # seperate each line by a space (except the last one)
-                    block_node.add_children(LeafNode(value=' ', tag=None))
+                    block_node.add_children(_from=LeafNode(value=' ', tag=None))
                 # At this point we can safely pop to remove the last ' ' Empty leaf node
                 block_node.children.pop()
                 
@@ -194,10 +195,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 # In code block we do not apply markdown conversion!
                 for line in lines[1:-1]: 
                     
-                    nodes = LeafNode(value=line, tag=None)
-                    block_node.add_children(nodes)
+                    block_node.add_children(_from=LeafNode(value=line, tag=None))
                     # seperate each line by a \n (except the last one)
-                    block_node.add_children(LeafNode(value='\n', tag=None))
+                    block_node.add_children(_from=LeafNode(value='\n', tag=None))
 
             case BlockType.QUOTE:
                 block_node.tag = 'blockquote'
@@ -205,10 +205,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 # In quote block we do not apply markdown conversion!
                 for line in lines: 
                     
-                    nodes = LeafNode(value=line.lstrip(_QUOTE).lstrip(), tag=None)
-                    block_node.add_children(nodes)
+                    block_node.add_children(_from=LeafNode(value=line.lstrip(_QUOTE).lstrip(), tag=None))
                     # seperate each line by a space (except the last one)
-                    block_node.add_children(LeafNode(value=' ', tag=None))
+                    block_node.add_children(_from=LeafNode(value=' ', tag=None))
                 # At this point we can safely pop to remove the last ' ' Empty leaf node
                 block_node.children.pop()
 
@@ -218,7 +217,7 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 for line in lines:
                     nodes = single_line_text_to_html_nodes(text=line[len(_UNORDERED_S):])
                     leaf_node = ParentNode(tag='li', children=nodes)
-                    block_node.add_children(leaf_node)
+                    block_node.add_children(_from=leaf_node)
 
             case BlockType.ORDERED_LIST:
                 block_node.tag = 'ol'
@@ -226,7 +225,7 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 for line in lines:
                     nodes = single_line_text_to_html_nodes(text=line[len(_SINGLE_O_L):])
                     leaf_node = ParentNode(tag='li', children=nodes)
-                    block_node.add_children(leaf_node)
+                    block_node.add_children(_from=leaf_node)
 
         root.add_children(_from=block_node)
 

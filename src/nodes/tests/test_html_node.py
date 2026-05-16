@@ -103,7 +103,7 @@ class TestHTMLNode(unittest.TestCase):
 
     def test___str__with_no_children_no_props(self):
         html_node = self.get_sample_test_html_node_no_props()
-        expected = 'HTMLNode(p, Some random paragraph!, children: None, None)'
+        expected = 'HTMLNode(p, Some random paragraph!, children: [], {})'
 
         self.assertEqual(expected, html_node.__str__())
     
@@ -113,8 +113,8 @@ class TestHTMLNode(unittest.TestCase):
         html_node.props = props
 
         expected = "HTMLNode(div, None, children: [HTMLNode(ol, None, " \
-        "children: [HTMLNode(li, First item, children: None, None), " \
-        "HTMLNode(li, Second item, children: None, None)], None)], {'class': 'container'})"
+        "children: [HTMLNode(li, First item, children: [], {}), " \
+        "HTMLNode(li, Second item, children: [], {})], {})], {'class': 'container'})"
 
         self.assertEqual(expected, html_node.__str__())
     
@@ -123,13 +123,13 @@ class TestHTMLNode(unittest.TestCase):
         html_node = self.get_sample_test_html_node_no_props()
         html_node.props = props
 
-        expected = "HTMLNode(p, Some random paragraph!, children: None, {'class': 'container'})"
+        expected = "HTMLNode(p, Some random paragraph!, children: [], {'class': 'container'})"
 
         self.assertEqual(expected, html_node.__str__())
      
     def test___repr__(self):
         html_node = self.get_sample_test_html_node_no_props()
-        expected = 'HTMLNode(p, Some random paragraph!, children: None, None)'
+        expected = 'HTMLNode(p, Some random paragraph!, children: [], {})'
 
         self.assertEqual(expected, html_node.__str__())
 

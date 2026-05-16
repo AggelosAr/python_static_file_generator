@@ -1,24 +1,32 @@
-from typing import Union
-
-
 # Todo for tag assert it doesnt conttain < and > or maybe a enum of tags
 # Todo maybe add comparison method.
 # todo add an enum of tags or smth. And validate against them. is this None?
+from typing import Sequence
+
+
 class HTMLNode:
 
     def __init__(self, 
                  tag: str | None = None, 
                  value: str | None = None, 
-                 children: list['HTMLNode'] = None, 
+                 children: Sequence['HTMLNode'] | None = None, 
                  props: dict | None = None):
         
         self.tag = tag 
         self.value = value
-        self.children = children
-        self.props = props
+        if not children:
+            self.children: list['HTMLNode'] = []
+        else:
+            self.children = list(children)
+        if not props:
+            self.props = {}
+        else:
+            self.props = props
     
-    # TODO add test
-    def add_children(self, _from: Union['HTMLNode', list['HTMLNode']]):
+    def add_children(self, _from: 'HTMLNode' | Sequence['HTMLNode']):
+        # TODO add test
+        assert isinstance(_from, HTMLNode) or isinstance(_from, list)
+
         if isinstance(_from, list):
             self.children.extend(_from)
             return

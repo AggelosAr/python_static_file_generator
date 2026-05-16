@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Literal
 
 from .leaf_node import LeafNode
 
@@ -13,10 +12,9 @@ class TextType(Enum):
     LINK = 'link'
     IMAGE = 'image'
 
-    # TODO add test
     @classmethod
     def get_enum_type_from_symbol(cls, 
-                                  symbol: Literal['**', '_', '`', '![', '[']
+                                  symbol: str
                                   ) -> 'TextType':
         match symbol:
             case '**':
@@ -65,7 +63,9 @@ class TextNode:
             case _:
                 raise Exception(f'Invalid text type: {self.text_type}')
 
-    def __eq__(self, other: 'TextNode') -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, TextNode):
+            return NotImplemented
         return all(
             [
                 self.text == other.text,

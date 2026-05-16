@@ -1,24 +1,26 @@
+from typing import Literal
+
 from nodes.text_node import TextType, TextNode
 from .link_extractor import extract_markdown_images, extract_markdown_links
 
 
-# todo We Don't Care About Nested Inline Elements
-# todo text_type is ignored. maybe the type needs to be forced?
+SIMPLE_DELIMITERS = ['**', '_', '`']
+
+# TODO We Don't Care About Nested Inline Elements
 def split_nodes_delimiter(old_nodes: list[TextNode], 
-                          delimiter: str, 
-                          text_type: TextType) -> list[TextNode]:
+                          delimiter: str) -> list[TextNode]:
     
+    assert delimiter in SIMPLE_DELIMITERS, f'Delimiter {delimiter} not supported!'
+
     results = []
     for node in old_nodes:
         results.extend(split_node_with_delimiter(old_node=node,
-                                                 delimiter=delimiter,
-                                                 text_type=text_type))
+                                                 delimiter=delimiter))
     return results
 
 
 def split_node_with_delimiter(old_node: TextNode, 
-                              delimiter: str, 
-                              text_type: TextType) -> list[TextNode]:
+                              delimiter: str) -> list[TextNode]:
     
     if old_node.text == '':
         return [old_node]
@@ -31,7 +33,7 @@ def split_node_with_delimiter(old_node: TextNode,
 
     new_nodes = []
     idx = 0
-    current_split = []
+    current_split: list[str] = []
 
     while idx < len(old_node.text):
 
@@ -141,12 +143,10 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 def text_to_textnodes(text: str) -> list[TextNode]:
     # Text is a single line of text, maybe add types... (TODO)
     nodes = [TextNode(text=text, text_type=TextType.TEXT)]
-    simple_delimiters = ['**', '_', '`']
 
-    for simple_delimiter in simple_delimiters:
+    for simple_delimiter in SIMPLE_DELIMITERS:
         new_nodes = split_nodes_delimiter(old_nodes=nodes, 
-                                          delimiter=simple_delimiter,
-                                          text_type=TextType.TEXT)
+                                          delimiter=simple_delimiter)
         if new_nodes:
             nodes = new_nodes
 

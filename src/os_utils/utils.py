@@ -1,3 +1,5 @@
+from typing import Optional
+
 from blocks.block_utils import markdown_to_html_node, MarkDownBlock
 
 import os 
@@ -9,6 +11,7 @@ def init_public_dir(source='static', destination='public'):
     current_dir = os.getcwd()
 
     source_dir, destination_dir = os.path.join(*[current_dir, source]), os.path.join(*[current_dir, destination])
+    print(f'Deleting <{destination_dir}> dir')
     # Clean public dir
     if os.path.exists(path=destination_dir):
         shutil.rmtree(path=destination_dir)
@@ -39,7 +42,7 @@ def copy_tree(source: str, destination:str):
 def generate_page(from_path: str='content/index.md', 
                   template_path: str='template.html', 
                   dest_path: str='public/index.html',
-                  base_path: str=None):
+                  base_path: Optional[str]=None):
 
     print(f'Generating page from {from_path} to {dest_path} using {template_path}')
 
@@ -64,6 +67,7 @@ def generate_page(from_path: str='content/index.md',
 
 
 def generate_pages(base_path: str='/', search_path: str='content', destination: str='public'):
+    print(f'Initializing using base path <{base_path}>')
 
     for content in os.listdir(path=search_path):
         content_path = os.path.join(*[search_path, content])

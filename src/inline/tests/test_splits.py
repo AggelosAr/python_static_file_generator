@@ -9,7 +9,7 @@ class TestTextNode(unittest.TestCase):
 
     def test_split_node_with_delimiter(self):
         node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
-        new_nodes = split_node_with_delimiter(old_node=node, delimiter='`', text_type=TextType.CODE_TEXT)
+        new_nodes = split_node_with_delimiter(old_node=node, delimiter='`')
 
         expected = [
             TextNode(text='This is text with a ', text_type=TextType.TEXT),
@@ -21,8 +21,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_node_with_bold_delimiter(self):
         node = TextNode(text='This has **bold text** inside', text_type=TextType.TEXT)
         new_nodes = split_node_with_delimiter(old_node=node, 
-                                              delimiter='**', 
-                                              text_type=TextType.BOLD_TEXT)
+                                              delimiter='**')
 
         expected = [
             TextNode(text='This has ', text_type=TextType.TEXT),
@@ -35,8 +34,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_node_with_italic_delimiter(self):
         node = TextNode(text='This has _italic text_ inside', text_type=TextType.TEXT)
         new_nodes = split_node_with_delimiter(old_node=node, 
-                                              delimiter='_',
-                                                text_type=TextType.ITALIC_TEXT)
+                                              delimiter='_',)
 
         expected = [
             TextNode(text='This has ', text_type=TextType.TEXT),
@@ -48,8 +46,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_node_multiple_code_blocks(self):
         node = TextNode('Use `code1` and `code2` here', TextType.TEXT)
         new_nodes = split_node_with_delimiter(old_node=node, 
-                                              delimiter='`', 
-                                              text_type=TextType.CODE_TEXT)
+                                              delimiter='`')
 
         expected = [
             TextNode(text='Use ', text_type=TextType.TEXT),
@@ -64,8 +61,7 @@ class TestTextNode(unittest.TestCase):
         node = TextNode(text='Plain text only', text_type=TextType.TEXT)
        
         new_nodes = split_node_with_delimiter(old_node=node, 
-                                              delimiter='`', 
-                                              text_type=TextType.CODE_TEXT)
+                                              delimiter='`')
         
         self.assertEqual([TextNode(text='Plain text only', text_type=TextType.TEXT)], new_nodes)
 
@@ -73,8 +69,7 @@ class TestTextNode(unittest.TestCase):
         node = TextNode(text='', text_type=TextType.TEXT)
         
         new_nodes = split_node_with_delimiter(old_node=node, 
-                                              delimiter='`', 
-                                              text_type=TextType.CODE_TEXT)
+                                              delimiter='`')
         
         self.assertEqual([TextNode(text='', text_type=TextType.TEXT)], new_nodes)
 
@@ -83,16 +78,14 @@ class TestTextNode(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             _ = split_node_with_delimiter(old_node=node, 
-                                          delimiter='`', 
-                                          text_type=TextType.CODE_TEXT)
+                                          delimiter='`')
 
         self.assertEqual('Invalid Markdown syntax.', str(context.exception))
 
     def test_split_nodes_delimiter_list_with_one_element(self):
         node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
         new_nodes = split_nodes_delimiter(old_nodes=[node], 
-                                          delimiter='`', 
-                                          text_type=TextType.CODE_TEXT)
+                                          delimiter='`')
 
         expected = [
             TextNode(text='This is text with a ', text_type=TextType.TEXT),
@@ -104,8 +97,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_delimiter_list_with_double_element(self):
         node = TextNode(text='This is text with a `code block` word `code block`', text_type=TextType.TEXT)
         new_nodes = split_nodes_delimiter(old_nodes=[node], 
-                                          delimiter='`', 
-                                          text_type=TextType.CODE_TEXT)
+                                          delimiter='`')
 
         expected = [
             TextNode(text='This is text with a ', text_type=TextType.TEXT),
@@ -119,8 +111,7 @@ class TestTextNode(unittest.TestCase):
         node = TextNode(text='This is text with a `code block` word', text_type=TextType.TEXT)
         node_2 = TextNode(text='This has **bold text** inside', text_type=TextType.TEXT)
         new_nodes = split_nodes_delimiter(old_nodes=[node, node_2], 
-                                          delimiter='`', 
-                                          text_type=TextType.CODE_TEXT)
+                                          delimiter='`')
 
         expected = [
             TextNode(text='This is text with a ', text_type=TextType.TEXT),
